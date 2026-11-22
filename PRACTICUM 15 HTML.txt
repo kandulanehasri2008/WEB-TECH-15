@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Collection Toggle – Meridian Diagnostics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand">Meridian Diagnostics</a>
+      <span class="page-name">Booking settings</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container narrow">
+        <h2>Collection preference</h2>
+        <p class="section-intro">Choose how we collect your sample. Your choice is remembered the next time you visit.</p>
+
+        <!-- The toggle switch -->
+        <div class="setting-card" id="home-card">
+          <div>
+            <p class="setting-title">Home sample collection</p>
+            <p class="setting-desc" id="home-desc">Off: you will visit the centre.</p>
+          </div>
+          <label class="switch" for="home-toggle">
+            <input type="checkbox" id="home-toggle" class="switch-input" role="switch">
+            <span id="home-state">Off</span>
+          </label>
+        </div>
+
+        <!-- Parts of the page that change with the toggle -->
+        <div class="booking-preview">
+          <label for="test">Test</label>
+          <select id="test">
+            <option value="350">Complete Blood Count (CBC) – ₹350</option>
+            <option value="550">Lipid Profile – ₹550</option>
+            <option value="600">Thyroid Profile – ₹600</option>
+            <option value="700">Liver Function Test – ₹700</option>
+          </select>
+
+          <div class="home-field" id="home-field" hidden>
+            <label for="address">Collection address</label>
+            <textarea id="address" rows="2" maxlength="150" placeholder="House no., street, area, pincode"></textarea>
+            <p class="visit-note">A trained phlebotomist will visit between 6:30 and 10:00 AM.</p>
+          </div>
+
+          <div class="summary" id="summary">
+            <div class="summary-row"><span>Test fee</span><span id="fee-test">₹350</span></div>
+            <div class="summary-row" id="row-home" hidden><span>Home collection charge</span><span>₹150</span></div>
+            <div class="summary-row summary-total"><span>Total</span><span id="fee-total">₹350</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Meridian Diagnostics. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
+/* ---------- Variables, reset, base ---------- */
+:root {
+  --ink: #12263a;
+  --teal: #0f7c7a;
+  --teal-dark: #0a5c5a;
+  --mint: #e3f2ef;
+  --saffron: #e8a33d;
+  --paper: #fafbfa;
+  --line: #cfdcd9;
+  --white: #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Public Sans", Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--paper);
+}
+
+h1, h2, h3 { font-family: "Newsreader", Georgia, serif; line-height: 1.2; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; margin-bottom: 0.4rem; }
+p  { margin-bottom: 0.75rem; }
+ul { list-style: none; }
+a  { color: inherit; text-decoration: none; }
+
+.container { width: 92%; max-width: 1100px; margin: 0 auto; }
+
+.site-header {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 16px 0;
+}
+.brand { font-family: "Newsreader", Georgia, serif; font-size: 1.5rem; font-weight: 700; color: var(--teal); }
+.page-name { font-weight: 600; color: #4d6272; }
+
+.section { padding: 48px 0; }
+.section-tint { background-color: var(--mint); }
+.section-intro { margin-bottom: 24px; }
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--teal);
+  background-color: var(--white);
+  border: 2px solid var(--teal);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+.btn:hover { background-color: var(--teal); color: var(--white); }
+.btn-primary { background-color: var(--teal); color: var(--white); }
+.btn-primary:hover { background-color: var(--teal-dark); border-color: var(--teal-dark); transform: translateY(-2px); }
+.btn-small { padding: 6px 14px; font-size: 0.9rem; }
+
+.site-footer { padding: 20px 0; text-align: center; font-size: 0.85rem; color: #d5e0e6; background-color: var(--ink); }
+.site-footer p { margin: 0; }
+
+.empty-msg {
+  margin-top: 16px;
+  padding: 16px;
+  text-align: center;
+  background-color: var(--white);
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+.empty-msg[hidden] { display: none; }
+
+/* =====================================================
+   TOGGLE SWITCH
+   appearance  position  width  height  border-radius
+   background  transition  transform  :checked  ::before
+   ===================================================== */
+
+.narrow { max-width: 640px; }
+
+.setting-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background-color: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.setting-card.is-on { background-color: var(--mint); border-color: var(--teal); }
+
+.setting-title { margin: 0; font-weight: 600; }
+.setting-desc  { margin: 2px 0 0; font-size: 0.9rem; color: #4d6272; }
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 90px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* The checkbox itself becomes the switch track */
+.switch-input {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 30px;
+  margin: 0;
+  border-radius: 30px;
+  background-color: #9db3ae;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+/* The round knob */
+.switch-input::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s;
+}
+
+.switch-input:checked { background-color: var(--teal); }
+.switch-input:checked::before { transform: translateX(22px); }
+.switch-input:focus-visible { outline: 3px solid rgba(15, 124, 122, 0.4); outline-offset: 2px; }
+
+/* ---------- Content that reacts to the switch ---------- */
+.booking-preview {
+  margin-top: 24px;
+  padding: 24px;
+  background-color: var(--white);
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--teal);
+  border-radius: 12px;
+}
+.booking-preview label { display: block; margin: 0 0 6px; font-size: 0.9rem; font-weight: 600; }
+.booking-preview select,
+.booking-preview textarea {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background-color: var(--paper);
+  border: 1px solid #9db3ae;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.booking-preview select:focus,
+.booking-preview textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(15, 124, 122, 0.25);
+}
+.home-field[hidden] { display: none; }
+.visit-note { margin: -8px 0 16px; font-size: 0.85rem; color: #4d6272; }
+
+.summary { border-top: 1px solid var(--line); padding-top: 12px; }
+.summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
+.summary-row[hidden] { display: none; }
+.summary-total { margin-top: 4px; font-size: 1.15rem; font-weight: 700; color: var(--teal-dark); border-top: 1px dashed var(--line); }
+/* =====================================================
+   Meridian Diagnostics – Toggle switch (script.js)
+   Setting: "Home sample collection"
+   ON  -> address box appears and ₹150 is added to the total
+   OFF -> address box is hidden and the charge is removed
+   The choice is saved in Local Storage.
+
+   Uses: addEventListener, checked, classList.toggle,
+         localStorage.setItem, localStorage.getItem
+   ===================================================== */
+
+const STORAGE_KEY = "meridian_home_collection";
+const HOME_CHARGE = 150;
+
+const toggle      = document.getElementById("home-toggle");
+const stateText   = document.getElementById("home-state");
+const card        = document.getElementById("home-card");
+const description = document.getElementById("home-desc");
+const homeField   = document.getElementById("home-field");
+const homeRow     = document.getElementById("row-home");
+const testSelect  = document.getElementById("test");
+const feeTest     = document.getElementById("fee-test");
+const feeTotal    = document.getElementById("fee-total");
+
+function formatRupees(amount) {
+  return "₹" + amount.toLocaleString("en-IN");
+}
+
+/* Update the price summary */
+function updateTotal() {
+  const testFee = Number(testSelect.value);
+  const total = testFee + (toggle.checked ? HOME_CHARGE : 0);
+  feeTest.textContent = formatRupees(testFee);
+  feeTotal.textContent = formatRupees(total);
+}
+
+/* Update the whole page to match the switch */
+function applySetting(isOn) {
+  toggle.checked = isOn;
+  stateText.textContent = isOn ? "On" : "Off";
+  description.textContent = isOn
+    ? "On: a phlebotomist will visit you. A ₹150 collection charge applies."
+    : "Off: you will visit the centre.";
+
+  card.classList.toggle("is-on", isOn);     /* highlight the card */
+  homeField.hidden = !isOn;                 /* show / hide the address box */
+  homeRow.hidden = !isOn;                   /* show / hide the extra charge row */
+  updateTotal();
+}
+
+/* Read the saved setting when the page opens */
+let saved = false;
+try {
+  saved = localStorage.getItem(STORAGE_KEY) === "true";
+} catch (error) {
+  saved = false;                            /* storage blocked: start with Off */
+}
+applySetting(saved);
+
+/* Save the new setting whenever the switch is used */
+toggle.addEventListener("change", function () {
+  applySetting(toggle.checked);
+  try {
+    localStorage.setItem(STORAGE_KEY, String(toggle.checked));
+  } catch (error) {
+    /* storage unavailable: the switch still works for this visit */
+  }
+});
+
+/* A different test changes the total */
+testSelect.addEventListener("change", updateTotal);
